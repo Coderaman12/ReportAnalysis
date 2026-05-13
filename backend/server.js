@@ -6,7 +6,21 @@ import analyzeRouter from './routes/analyze.js';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      if (!origin) return cb(null, true);
+      if (allowedOrigins.length === 0) return cb(null, true);
+      if (allowedOrigins.includes(origin)) return cb(null, true);
+      cb(new Error(`Origin ${origin} not allowed by CORS`));
+    },
+  })
+);
 app.use(express.json({ limit: '25mb' }));
 
 app.get('/api/health', (_req, res) => {

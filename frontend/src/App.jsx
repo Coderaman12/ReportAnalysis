@@ -17,7 +17,8 @@ export default function App() {
       formData.append('report', file);
       if (notes) formData.append('notes', notes);
 
-      const res = await fetch('/api/analyze', {
+      const apiBase = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${apiBase}/api/analyze`, {
         method: 'POST',
         body: formData,
       });
