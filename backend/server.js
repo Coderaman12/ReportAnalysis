@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import analyzeRouter from './routes/analyze.js';
+import xrayRouter from './routes/xray.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -28,6 +29,7 @@ app.get('/api/health', (_req, res) => {
 });
 
 app.use('/api/analyze', analyzeRouter);
+app.use('/api/xray/analyze', xrayRouter);
 
 app.use((err, _req, res, _next) => {
   console.error('Unhandled error:', err);

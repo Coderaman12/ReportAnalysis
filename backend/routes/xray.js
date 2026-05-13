@@ -1,31 +1,25 @@
 import { Router } from 'express';
-import { analyzeReport } from '../services/analyzer.js';
+import { analyzeXray } from '../services/xrayAnalyzer.js';
 import { makeUploader } from '../lib/multerFactory.js';
-import {
-  MAX_UPLOAD_BYTES,
-  MAX_NOTES_LENGTH,
-  REPORT_MIME_TYPES,
-} from '../lib/constants.js';
+import { MAX_UPLOAD_BYTES, IMAGE_MIME_TYPES } from '../lib/constants.js';
 
 const router = Router();
 
 const upload = makeUploader({
-  fieldName: 'report',
-  allowedMimes: REPORT_MIME_TYPES,
+  fieldName: 'xray',
+  allowedMimes: IMAGE_MIME_TYPES,
   maxBytes: MAX_UPLOAD_BYTES,
 });
 
 router.post('/', upload, async (req, res, next) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded. Use field name "report".' });
+      return res.status(400).json({ error: 'No file uploaded. Use field name "xray".' });
     }
-    const patientNotes = (req.body.notes || '').toString().slice(0, MAX_NOTES_LENGTH);
-    const result = await analyzeReport({
+    const result = await analyzeXray({
       buffer: req.file.buffer,
       mimetype: req.file.mimetype,
       filename: req.file.originalname,
-      patientNotes,
     });
     res.json(result);
   } catch (err) {
